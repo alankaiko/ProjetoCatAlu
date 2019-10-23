@@ -1,10 +1,18 @@
 package br.com.alucentro.api.repository.filtro;
 
 public class ProdutoFilter {
+	private String codigo;
 	private String referencia;
 	private String descricao;
 	private String descricaocomplementar;
-	private boolean status;
+	
+	public String getCodigo() {
+		return codigo;
+	}
+	
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 
 	public String getReferencia() {
 		return referencia;
@@ -28,14 +36,6 @@ public class ProdutoFilter {
 
 	public void setDescricaocomplementar(String descricaocomplementar) {
 		this.descricaocomplementar = descricaocomplementar;
-	}
-
-	public boolean isStatus() {
-		return status;
-	}
-
-	public void setStatus(boolean status) {
-		this.status = status;
 	}
 
 }

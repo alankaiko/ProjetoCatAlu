@@ -1,12 +1,12 @@
 package br.com.alucentro.api.resources;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.alucentro.api.dominio.Produto;
 import br.com.alucentro.api.eventos.RecursoCriadoEvent;
+import br.com.alucentro.api.repository.filtro.ProdutoFilter;
 import br.com.alucentro.api.service.ProdutoService;
 
 @RestController
@@ -33,8 +34,8 @@ public class ProdutoResource {
 	private ApplicationEventPublisher publisher;
 	
 	@GetMapping
-	public List<Produto> Listando() {
-		return this.service.Listar();
+	public Page<Produto> Listando(ProdutoFilter filtro, Pageable pageable) {
+		return this.service.Listar(filtro, pageable);
 	}
 	
 	@PostMapping
