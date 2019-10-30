@@ -42,6 +42,7 @@ public class ProdutoResource {
 	public ResponseEntity<Produto> Salvar(@Valid @RequestBody Produto produto, HttpServletResponse resposta){
 		Produto salvo = this.service.Criar(produto);
 		this.publisher.publishEvent(new RecursoCriadoEvent(this, resposta, salvo.getId()));
+		System.out.println("ta consumindo aqui");
 		return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
 	}
 	

@@ -54,7 +54,7 @@ public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery{
 			lista.add(builder.like(builder.lower(root.get(Produto_.descricaocomplementar)), "%"+filtro.getDescricaocomplementar().toLowerCase()+"%"));
 		
 		
-		return null;
+		return lista.toArray(new Predicate[lista.size()]);
 	}
 
 	private void AdicionarPaginacao(TypedQuery<Produto> tiped, Pageable page) {
