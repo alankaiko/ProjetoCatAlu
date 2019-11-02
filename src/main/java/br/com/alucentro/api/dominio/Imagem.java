@@ -2,15 +2,15 @@ package br.com.alucentro.api.dominio;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table
@@ -48,8 +48,9 @@ public class Imagem implements Serializable {
 		this.caminho = caminho;
 	}
 	
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "tbl_produto_id", referencedColumnName = "id")
+	@ManyToOne
+	@JoinColumn(name = "tbl_produto_id", nullable = true)
+	@JsonBackReference
 	public Produto getProduto() {
 		return produto;
 	}

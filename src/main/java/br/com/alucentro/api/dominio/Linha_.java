@@ -9,12 +9,12 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class Linha_ {
 
 	public static volatile SingularAttribute<Linha, String> cor;
-	public static volatile SingularAttribute<Linha, String> nomeLinha;
 	public static volatile SingularAttribute<Linha, Long> id;
+	public static volatile SingularAttribute<Linha, String> nomelinha;
 
 	public static final String COR = "cor";
-	public static final String NOME_LINHA = "nomeLinha";
 	public static final String ID = "id";
+	public static final String NOMELINHA = "nomelinha";
 
 }
 

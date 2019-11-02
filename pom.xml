@@ -19,9 +19,35 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		
+		<spring-security-oauth2.version>2.2.1.RELEASE</spring-security-oauth2.version>
+		<spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
 	</properties>
 
-	<dependencies>
+	<dependencies>		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>${spring-security-oauth2.version}</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.springframework.security</groupId>
+    		<artifactId>spring-security-jwt</artifactId>
+    		<version>${spring-security-jwt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>

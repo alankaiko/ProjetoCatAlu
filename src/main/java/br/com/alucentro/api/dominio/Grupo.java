@@ -15,7 +15,7 @@ public class Grupo implements Serializable {
 
 	private Long id;
 	private String abreviacao;
-	private String nomeGrupo;
+	private String nomegrupo;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,12 +35,12 @@ public class Grupo implements Serializable {
 		this.abreviacao = abreviacao;
 	}
 
-	public String getNomeGrupo() {
-		return nomeGrupo;
+	public String getNomegrupo() {
+		return nomegrupo;
 	}
-
-	public void setNomeGrupo(String nomeGrupo) {
-		this.nomeGrupo = nomeGrupo;
+	
+	public void setNomegrupo(String nomegrupo) {
+		this.nomegrupo = nomegrupo;
 	}
 
 	@Override

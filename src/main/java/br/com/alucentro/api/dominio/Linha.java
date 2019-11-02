@@ -14,7 +14,7 @@ public class Linha implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
-	private String nomeLinha;
+	private String nomelinha;
 	private String cor;
 
 	@Id
@@ -27,12 +27,12 @@ public class Linha implements Serializable {
 		this.id = id;
 	}
 
-	public String getNomeLinha() {
-		return nomeLinha;
+	public String getNomelinha() {
+		return nomelinha;
 	}
-
-	public void setNomeLinha(String nomeLinha) {
-		this.nomeLinha = nomeLinha;
+	
+	public void setNomelinha(String nomelinha) {
+		this.nomelinha = nomelinha;
 	}
 
 	public String getCor() {

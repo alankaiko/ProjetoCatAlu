@@ -9,12 +9,12 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class Grupo_ {
 
 	public static volatile SingularAttribute<Grupo, String> abreviacao;
-	public static volatile SingularAttribute<Grupo, String> nomeGrupo;
 	public static volatile SingularAttribute<Grupo, Long> id;
+	public static volatile SingularAttribute<Grupo, String> nomegrupo;
 
 	public static final String ABREVIACAO = "abreviacao";
-	public static final String NOME_GRUPO = "nomeGrupo";
 	public static final String ID = "id";
+	public static final String NOMEGRUPO = "nomegrupo";
 
 }
 

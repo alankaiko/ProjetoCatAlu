@@ -1,5 +1,7 @@
 package br.com.alucentro.api.resources;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -34,7 +36,7 @@ public class ProdutoResource {
 	private ApplicationEventPublisher publisher;
 	
 	@GetMapping
-	public Page<Produto> Listando(ProdutoFilter filtro, Pageable pageable) {
+	public List<Produto> Listando(ProdutoFilter filtro, Pageable pageable) {
 		return this.service.Listar(filtro, pageable);
 	}
 	

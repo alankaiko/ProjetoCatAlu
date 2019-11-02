@@ -1,5 +1,6 @@
 package br.com.alucentro.api.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
@@ -18,8 +19,8 @@ public class ProdutoService {
 	@Autowired
 	private ProdutoRepository dao;
 	
-	public Page<Produto> Listar(ProdutoFilter filtro, Pageable pageable){
-		return this.dao.Filtrando(filtro, pageable);
+	public List<Produto> Listar(ProdutoFilter filtro, Pageable pageable){
+		return this.dao.findAll();
 	}
 	
 	public Produto Criar(Produto produto) {
