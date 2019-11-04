@@ -2,8 +2,8 @@ package br.com.alucentro.api.dominio;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -37,7 +39,7 @@ public class Produto implements Serializable {
 	private Marca marca;
 	private BigDecimal peso;
 	private List<Imagem> listaCaminhoImagem;
-	private LocalDate datainclusao;
+	private Date datainclusao;
 	private boolean estoque;
 	private boolean status;
 
@@ -160,11 +162,12 @@ public class Produto implements Serializable {
 		this.listaCaminhoImagem = listaCaminhoImagem;
 	}
 
-	public LocalDate getDatainclusao() {
+	@Temporal(TemporalType.DATE)
+	public Date getDatainclusao() {
 		return datainclusao;
 	}
-
-	public void setDatainclusao(LocalDate datainclusao) {
+	
+	public void setDatainclusao(Date datainclusao) {
 		this.datainclusao = datainclusao;
 	}
 

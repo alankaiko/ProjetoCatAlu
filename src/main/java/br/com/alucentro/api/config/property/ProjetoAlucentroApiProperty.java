@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("alucentro")
 public class ProjetoAlucentroApiProperty {
 	private String origemautorizada = "http://localhost:8000";
+	//private String origemautorizada = "*";
 	private final Seguranca seguranca = new Seguranca();
 	private final Mail mail = new Mail();
 	private final S3 s3 = new S3();

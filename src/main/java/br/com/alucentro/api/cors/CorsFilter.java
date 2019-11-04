@@ -30,9 +30,6 @@ public class CorsFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		
-		response.setHeader("Access-Control-Allow-Origin", alucentroapiproperty.getOrigemautorizada());
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-		
 		if ("OPTIONS".equals(request.getMethod()) && alucentroapiproperty.getOrigemautorizada().equals(request.getHeader("Origin"))) {
 			response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS");
         	response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept");

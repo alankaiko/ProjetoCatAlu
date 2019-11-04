@@ -1,7 +1,5 @@
 package br.com.alucentro.api.resources;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -11,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,32 +34,36 @@ public class ProdutoResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
+	@CrossOrigin
 	@GetMapping
-	public List<Produto> Listando(ProdutoFilter filtro, Pageable pageable) {
+	public Page<Produto> Listando(ProdutoFilter filtro, Pageable pageable) {
 		return this.service.Listar(filtro, pageable);
 	}
 	
+	@CrossOrigin
 	@PostMapping
 	public ResponseEntity<Produto> Salvar(@Valid @RequestBody Produto produto, HttpServletResponse resposta){
 		Produto salvo = this.service.Criar(produto);
 		this.publisher.publishEvent(new RecursoCriadoEvent(this, resposta, salvo.getId()));
-		System.out.println("ta consumindo aqui");
 		return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
 	}
 	
+	@CrossOrigin
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void Remover(@PathVariable Long id) {
 		this.service.Deletar(id);
 	}
 	
+	@CrossOrigin
 	@GetMapping("/{id}")
 	public ResponseEntity<Produto> PorId(@PathVariable Long id){
 		Produto salvo = this.service.BuscarPorId(id);
 		return ResponseEntity.ok(salvo);
 	}
 	
-	@PutMapping
+	@CrossOrigin
+	@PutMapping("/{id}")
 	public ResponseEntity<Produto> Atualizar(@PathVariable Long id, @Valid @RequestBody Produto produto){
 		Produto salvo = this.service.Atualizar(id, produto);
 		return ResponseEntity.ok(salvo);

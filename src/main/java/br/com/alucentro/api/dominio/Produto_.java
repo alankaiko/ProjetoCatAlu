@@ -1,7 +1,7 @@
 package br.com.alucentro.api.dominio;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
@@ -14,7 +14,7 @@ public abstract class Produto_ {
 	public static volatile SingularAttribute<Produto, String> codigo;
 	public static volatile SingularAttribute<Produto, String> descricaocomplementar;
 	public static volatile SingularAttribute<Produto, BigDecimal> peso;
-	public static volatile SingularAttribute<Produto, LocalDate> datainclusao;
+	public static volatile SingularAttribute<Produto, Date> datainclusao;
 	public static volatile SingularAttribute<Produto, Grupo> grupo;
 	public static volatile ListAttribute<Produto, Imagem> listaCaminhoImagem;
 	public static volatile SingularAttribute<Produto, Linha> linha;
