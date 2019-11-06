@@ -24,7 +24,7 @@
 		<spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
 	</properties>
 
-	<dependencies>		
+	<dependencies>	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>

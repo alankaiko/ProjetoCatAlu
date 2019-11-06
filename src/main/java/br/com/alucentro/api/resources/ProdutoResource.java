@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import br.com.alucentro.api.dominio.Produto;
 import br.com.alucentro.api.eventos.RecursoCriadoEvent;
@@ -27,6 +29,7 @@ import br.com.alucentro.api.service.ProdutoService;
 
 @RestController
 @RequestMapping("/produtos")
+@CrossOrigin("*")
 public class ProdutoResource {
 	@Autowired
 	private ProdutoService service;
@@ -34,13 +37,16 @@ public class ProdutoResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
-	@CrossOrigin
 	@GetMapping
 	public Page<Produto> Listando(ProdutoFilter filtro, Pageable pageable) {
 		return this.service.Listar(filtro, pageable);
 	}
 	
-	@CrossOrigin
+	@PostMapping("/anexo")
+	public void upload(@RequestParam MultipartFile foto) {
+		this.service.salvarFoto(foto);
+	}
+	
 	@PostMapping
 	public ResponseEntity<Produto> Salvar(@Valid @RequestBody Produto produto, HttpServletResponse resposta){
 		Produto salvo = this.service.Criar(produto);
@@ -48,21 +54,18 @@ public class ProdutoResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
 	}
 	
-	@CrossOrigin
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void Remover(@PathVariable Long id) {
 		this.service.Deletar(id);
 	}
 	
-	@CrossOrigin
 	@GetMapping("/{id}")
 	public ResponseEntity<Produto> PorId(@PathVariable Long id){
 		Produto salvo = this.service.BuscarPorId(id);
 		return ResponseEntity.ok(salvo);
 	}
 	
-	@CrossOrigin
 	@PutMapping("/{id}")
 	public ResponseEntity<Produto> Atualizar(@PathVariable Long id, @Valid @RequestBody Produto produto){
 		Produto salvo = this.service.Atualizar(id, produto);
