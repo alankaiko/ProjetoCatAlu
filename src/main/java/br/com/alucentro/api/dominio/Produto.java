@@ -2,24 +2,18 @@ package br.com.alucentro.api.dominio;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table
@@ -38,15 +32,11 @@ public class Produto implements Serializable {
 	private Linha linha;
 	private Marca marca;
 	private BigDecimal peso;
-	private List<Imagem> listaCaminhoImagem;
+	private Imagem imagem;
 	private Date datainclusao;
 	private boolean estoque;
 	private boolean status;
 
-
-	public Produto() {
-		this.listaCaminhoImagem = new ArrayList<Imagem>();
-	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -152,14 +142,14 @@ public class Produto implements Serializable {
 		this.peso = peso;
 	}
 
-	@OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JsonManagedReference
-	public List<Imagem> getListaCaminhoImagem() {
-		return listaCaminhoImagem;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "tbl_imagem_id", referencedColumnName = "id")
+	public Imagem getImagem() {
+		return imagem;
 	}
-
-	public void setListaCaminhoImagem(List<Imagem> listaCaminhoImagem) {
-		this.listaCaminhoImagem = listaCaminhoImagem;
+	
+	public void setImagem(Imagem imagem) {
+		this.imagem = imagem;
 	}
 
 	@Temporal(TemporalType.DATE)

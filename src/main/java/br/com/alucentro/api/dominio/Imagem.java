@@ -20,7 +20,6 @@ public class Imagem implements Serializable {
 	private Long id;
 	private String nome;
 	private String caminho;
-	private Produto produto;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,16 +47,7 @@ public class Imagem implements Serializable {
 		this.caminho = caminho;
 	}
 	
-	@ManyToOne
-	@JoinColumn(name = "tbl_produto_id", nullable = true)
-	@JsonBackReference
-	public Produto getProduto() {
-		return produto;
-	}
 	
-	public void setProduto(Produto produto) {
-		this.produto = produto;
-	}
 
 	@Override
 	public int hashCode() {
