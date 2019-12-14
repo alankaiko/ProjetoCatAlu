@@ -32,7 +32,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory()
-			.withClient("angular")
+			.withClient("alucentro")
 			.secret("123456")
 			.scopes("read", "write")
 			.authorizedGrantTypes("password", "refresh_token")
@@ -40,7 +40,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 			.refreshTokenValiditySeconds(3600 * 24)
 			.and()
 			.withClient("mobile")
-			.secret("$2a$10$KJRZ.d9lgifvJU420wX7Oeb2sA3mgnGjv9iyUWNqcN1RxjXnKfcKK")
+			.secret("123456")
 			.scopes("read")
 			.authorizedGrantTypes("password", "refresh_token")
 			.accessTokenValiditySeconds(1800)

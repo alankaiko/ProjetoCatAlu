@@ -15,6 +15,7 @@ public class Linha implements Serializable {
 
 	private Long id;
 	private String nomelinha;
+	private String descricao;
 	private String cor;
 
 	@Id
@@ -33,6 +34,14 @@ public class Linha implements Serializable {
 	
 	public void setNomelinha(String nomelinha) {
 		this.nomelinha = nomelinha;
+	}
+	
+	public String getDescricao() {
+		return descricao;
+	}
+	
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	public String getCor() {
@@ -67,5 +76,12 @@ public class Linha implements Serializable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Linha [id=" + id + ", nomelinha=" + nomelinha + ", descricao=" + descricao + ", cor=" + cor + "]";
+	}
+	
+	
 
 }

@@ -1,5 +1,7 @@
 package br.com.alucentro.api.repository.filtro;
 
+import java.math.BigDecimal;
+
 public class ProdutoFilter {
 	private String codigo;
 	private String referencia;

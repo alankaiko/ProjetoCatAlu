@@ -5,15 +5,19 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table
@@ -32,11 +36,12 @@ public class Produto implements Serializable {
 	private Linha linha;
 	private Marca marca;
 	private BigDecimal peso;
+	private BigDecimal tamanho;
 	private Imagem imagem;
 	private Date datainclusao;
 	private boolean estoque;
 	private boolean status;
-
+	private Departamento departamento;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +53,8 @@ public class Produto implements Serializable {
 		this.id = id;
 	}
 
+	@NotNull
+	@Column(name = "codigo", unique = true)
 	public String getCodigo() {
 		return codigo;
 	}
@@ -91,13 +98,21 @@ public class Produto implements Serializable {
 	public BigDecimal getPreco() {
 		return preco;
 	}
+	
+	public BigDecimal getTamanho() {
+		return tamanho;
+	}
+	
+	public void setTamanho(BigDecimal tamanho) {
+		this.tamanho = tamanho;
+	}
 
 	public void setPreco(BigDecimal preco) {
 		this.preco = preco;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "tbl_grupo_id", referencedColumnName = "id")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "tbl_grupo_id", referencedColumnName = "id", nullable = true)
 	public Grupo getGrupo() {
 		return grupo;
 	}
@@ -114,8 +129,8 @@ public class Produto implements Serializable {
 		this.unidade = unidade;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "tbl_linha_id", referencedColumnName = "id")
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "tbl_linha_id", referencedColumnName = "id", nullable = true)
 	public Linha getLinha() {
 		return linha;
 	}
@@ -176,7 +191,17 @@ public class Produto implements Serializable {
 	public void setStatus(boolean status) {
 		this.status = status;
 	}
-
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "tbl_departamento_id", referencedColumnName = "id")
+	public Departamento getDepartamento() {
+		return departamento;
+	}
+	
+	public void setDepartamento(Departamento departamento) {
+		this.departamento = departamento;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

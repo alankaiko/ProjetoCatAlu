@@ -1,27 +1,17 @@
 package br.com.alucentro.api.resources;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,11 +24,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.alucentro.api.dominio.Produto;
 import br.com.alucentro.api.eventos.RecursoCriadoEvent;
 import br.com.alucentro.api.repository.filtro.ProdutoFilter;
+import br.com.alucentro.api.repository.projecoes.ResumoProduto;
 import br.com.alucentro.api.service.ProdutoService;
 
 @RestController
@@ -51,58 +41,26 @@ public class ProdutoResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
+	@GetMapping("/vefifica/{codigo}")
+	public boolean VerificaCodigo(@PathVariable String codigo) {
+		return this.service.VerificaSeExisteCodigo(codigo);
+	}
+	
 	@GetMapping
 	public Page<Produto> Listando(ProdutoFilter filtro, Pageable pageable) {
 		return this.service.Listar(filtro, pageable);
 	}
 	
+	@GetMapping(params = "resumo")
+	public Page<ResumoProduto> Resumir(ProdutoFilter filtro, Pageable page) {
+		return this.service.Resume(filtro, page);
+	}
 	
 	@PostMapping("/anexo")
-	public ResponseEntity<String> upload(@RequestParam MultipartFile foto) {
-		String nomearquivo = this.service.salvarFoto(foto);
-		System.out.println("veio aqui?");
-		return ResponseEntity.status(HttpStatus.CREATED).body(nomearquivo);
+	public void upload(@RequestParam MultipartFile foto) {
+		this.service.SalvarFoto(foto);
 	}
 	
-	@GetMapping("/down/{codigo}")
-	public ResponseEntity<String> pegaimagem(@PathVariable String codigo){
-		String img = this.service.PegarImagens(codigo);
-		return ResponseEntity.ok(img);
-	}
-	
-	@GetMapping("/download/{fileName}")
-	public ResponseEntity downloadFileFromLocal(@PathVariable String fileName, HttpServletResponse response) {
-		Path path = Paths.get("C:\\catalogo\\imagens\\" + fileName);
-		Resource resource = null;
-		System.out.println("rodou aqui");
-		try {
-			resource = new UrlResource(path.toUri());
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		return ResponseEntity.ok()
-				.contentType(MediaType.parseMediaType("image/jpeg"))
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-				.body(resource);
-	}
-	
-//	@GetMapping("/download/{codigo}")
-//	public ResponseEntity<Resource> downloadFileFromLocal(@PathVariable String codigo) {
-//		Resource resource = this.service.PegarImagem(codigo);
-//
-//		return ResponseEntity.ok()
-//				.contentType(MediaType.parseMediaType(""))
-//				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-//				.body(resource);
-//	}
-	
-//	@GetMapping(value = "/download")
-//	public ResponseEntity DownImagem(String nomearquivo, HttpServletResponse response) {
-//		System.out.println("chamou o meotod");
-//		HttpServletResponse resposta = this.service.downloadImageGroovy(response, nomearquivo);
-//		return ResponseEntity.ok(resposta);
-//	}
-//	
 	@PostMapping
 	public ResponseEntity<Produto> Salvar(@Valid @RequestBody Produto produto, HttpServletResponse resposta){
 		Produto salvo = this.service.Criar(produto);
@@ -128,57 +86,32 @@ public class ProdutoResource {
 		return ResponseEntity.ok(salvo);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	List<String> files = new ArrayList<String>();
-//	 
-//	  @PostMapping("/post")
-//	  public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
-//	    String message = "";
-//	    try {
-//	      this.service.store(file);
-//	      files.add(file.getOriginalFilename());
-//	 
-//	      message = "You successfully uploaded " + file.getOriginalFilename() + "!";
-//	      return ResponseEntity.status(HttpStatus.OK).body(message);
-//	    } catch (Exception e) {
-//	      message = "FAIL to upload " + file.getOriginalFilename() + "!";
-//	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
-//	    }
-//	  }
-//	 
-//	  @GetMapping("/getallfiles")
-//	  public ResponseEntity<List<String>> getListFiles(Model model) {
-//	    List<String> fileNames = files.stream().map(fileName -> MvcUriComponentsBuilder
-//	        .fromMethodName(ProdutoResource.class, "getFile", fileName).build().toString())
-//	        .collect(Collectors.toList());
-//	 
-//	    return ResponseEntity.ok().body(fileNames);
-//	  }
-//	 
-//	  @GetMapping("/files/{filename:.+}")
-//	  @ResponseBody
-//	  public ResponseEntity<Resource> getFile(@PathVariable String filename) {
-//	    Resource file = this.service.loadFile(filename);
-//	    return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
-//	  }
+	@GetMapping(value = "/imagem/{codigo}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> BuscarImagem(@PathVariable String codigo) throws IOException {
+    	byte[] bytes = this.service.BuscarImagem(codigo);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    }
+    
+    @GetMapping(value = "/icone/{codigo}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> BuscarIcone(@PathVariable String codigo) throws IOException {
+        byte[] bytes = this.service.BuscarIcones(codigo);    
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    }
+    
+//    @GetMapping(value = "/primeiraimagem", produces = MediaType.IMAGE_JPEG_VALUE)
+//    public void getImage(HttpServletResponse response) throws IOException {
+//        ClassPathResource imgFile = new ClassPathResource("catalogo/imagens/algar.jpeg");
+//
+//        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+//        StreamUtils.copy(imgFile.getInputStream(), response.getOutputStream());
+//	}
+//   
+//    @GetMapping(value = "/terceiraimagem", produces = MediaType.IMAGE_JPEG_VALUE)
+//    public ResponseEntity<InputStreamResource> getImagem() throws IOException {
+//    	ClassPathResource imgFile = new ClassPathResource("catalogo/imagens/algar.jpeg");
+//
+//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(new InputStreamResource(imgFile.getInputStream()));
+//    }
+ 
 	
 }

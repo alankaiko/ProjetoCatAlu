@@ -11,10 +11,12 @@ public abstract class Linha_ {
 	public static volatile SingularAttribute<Linha, String> cor;
 	public static volatile SingularAttribute<Linha, Long> id;
 	public static volatile SingularAttribute<Linha, String> nomelinha;
+	public static volatile SingularAttribute<Linha, String> descricao;
 
 	public static final String COR = "cor";
 	public static final String ID = "id";
 	public static final String NOMELINHA = "nomelinha";
+	public static final String DESCRICAO = "descricao";
 
 }
 

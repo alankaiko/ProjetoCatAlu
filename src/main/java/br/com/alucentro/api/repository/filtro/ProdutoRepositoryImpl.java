@@ -18,11 +18,32 @@ import org.springframework.util.StringUtils;
 
 import br.com.alucentro.api.dominio.Produto;
 import br.com.alucentro.api.dominio.Produto_;
+import br.com.alucentro.api.repository.projecoes.ResumoProduto;
 
 public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery{
 	@PersistenceContext
 	private EntityManager em;
 
+	@Override
+	public boolean VerificarSeCodigoExiste(String codigo) {
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Produto> query = builder.createQuery(Produto.class);
+		Root<Produto> root = query.from(Produto.class);
+
+		query.select(builder.construct(Produto.class, root.get(Produto_.codigo)));
+		
+		
+		Predicate[] predicates = VerificarString(builder, codigo, root);
+		query.where(predicates);
+		
+		TypedQuery<Produto> tiped = em.createQuery(query);
+		boolean verifica = tiped.getResultList().isEmpty();
+		System.out.println(tiped.getResultList().toString());
+		System.out.println(verifica);
+		
+		return verifica;
+	}
+	
 	@Override
 	public Page<Produto> Filtrando(ProdutoFilter filtro, Pageable pageable) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -36,6 +57,25 @@ public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery{
 		AdicionarPaginacao(tiped, pageable);
 		
 		return new PageImpl<>(tiped.getResultList(), pageable, Total(filtro));
+	}
+	
+	@Override
+	public Page<ResumoProduto> resumir(ProdutoFilter filtro, Pageable pageable) {
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<ResumoProduto> criteria = builder.createQuery(ResumoProduto.class);
+		Root<Produto> root = criteria.from(Produto.class);
+		
+		criteria.orderBy(builder.asc(root.get("id")));		
+		criteria.select(builder.construct(
+			ResumoProduto.class, root.get(Produto_.id), root.get(Produto_.codigo), root.get(Produto_.descricao), root.get(Produto_.peso)));
+		
+		Predicate[] predicates = AdicionarRestricoes(builder, filtro, root);
+		criteria.where(predicates);
+		
+		TypedQuery<ResumoProduto> query = em.createQuery(criteria);
+		AdicionarPaginacao(query, pageable);
+		
+		return new PageImpl<>(query.getResultList(), pageable, Total(filtro));
 	}
 	
 	private Predicate[] AdicionarRestricoes(CriteriaBuilder builder, ProdutoFilter filtro, Root<Produto> root) {
@@ -56,8 +96,17 @@ public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery{
 		
 		return lista.toArray(new Predicate[lista.size()]);
 	}
+	
+	private Predicate[] VerificarString(CriteriaBuilder builder, String codigo, Root<Produto> root) {
+		List<Predicate> lista= new ArrayList<Predicate>();
+		
+		if(!StringUtils.isEmpty(codigo))
+			lista.add(builder.like(builder.lower(root.get(Produto_.codigo)), "%"+ codigo.toLowerCase()+"%"));
+		
+		return lista.toArray(new Predicate[lista.size()]);
+	}
 
-	private void AdicionarPaginacao(TypedQuery<Produto> tiped, Pageable page) {
+	private void AdicionarPaginacao(TypedQuery<?> tiped, Pageable page) {
 		int paginaatual = page.getPageNumber();
 		int totalporpagina = page.getPageSize();
 		int primeiroRegistroDaPagina = paginaatual * totalporpagina;

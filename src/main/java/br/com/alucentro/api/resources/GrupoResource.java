@@ -7,8 +7,11 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,10 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.alucentro.api.dominio.Grupo;
 import br.com.alucentro.api.eventos.RecursoCriadoEvent;
+import br.com.alucentro.api.repository.filtro.GrupoFilter;
 import br.com.alucentro.api.service.GrupoService;
 
 @RestController
 @RequestMapping("/grupos")
+@CrossOrigin("*")
 public class GrupoResource {
 	@Autowired
 	private GrupoService service;
@@ -33,8 +38,13 @@ public class GrupoResource {
 	private ApplicationEventPublisher publisher;
 	
 	@GetMapping
-	public List<Grupo> Listar() {
-		return this.service.Listar();
+	public List<Grupo> ListarTodos(){
+		return this.service.ListarTodos();
+	}
+	
+	@GetMapping(params = "resumo")
+	public Page<Grupo> ListarFiltro(GrupoFilter filtro, Pageable page) {
+		return this.service.Filtrando(filtro, page);
 	}
 	
 	@PostMapping

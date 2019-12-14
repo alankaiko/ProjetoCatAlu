@@ -1,38 +1,32 @@
 package br.com.alucentro.api.service;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.imageio.ImageIO;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.alucentro.api.dominio.Produto;
 import br.com.alucentro.api.repository.ProdutoRepository;
 import br.com.alucentro.api.repository.filtro.ProdutoFilter;
+import br.com.alucentro.api.repository.projecoes.ResumoProduto;
 
 @Service
 public class ProdutoService {
@@ -47,69 +41,17 @@ public class ProdutoService {
 	
 	@Value("${produto.disco.diretorio-icones}")
 	private String diretorioIcones;
-	
-	
-	public String salvarFoto(MultipartFile imagem) {
-		return this.salvar(this.diretorioFotos, imagem);
+    
+	public boolean VerificaSeExisteCodigo(String codigo) {
+		return this.dao.VerificarSeCodigoExiste(codigo);
 	}
-	
-	private String salvar(String diretorio, MultipartFile arquivo) {
-		String nomearquivo = StringUtils.cleanPath(arquivo.getOriginalFilename());
-		
-		Path diretorioPath = Paths.get(this.raiz, diretorio);
-		Path arquivoPath = diretorioPath.resolve(arquivo.getOriginalFilename());
-		
-		try {
-			Files.createDirectories(diretorioPath);
-			arquivo.transferTo(arquivoPath.toFile());	
-
-		} catch (IOException e) {
-			throw new RuntimeException("Problemas na tentativa de salvar arquivo.", e);
-		}	
-		String arquivouri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/produtos/anexo/").path(nomearquivo).toUriString();
-		System.out.println(arquivouri);
-		return nomearquivo;
-	}
-	
-	public HttpServletResponse downloadImageGroovy(String nomearquivo, HttpServletResponse response){
-	try {
-		ClassPathResource imageFile = new ClassPathResource(this.diretorioFotos + nomearquivo);
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        response.setHeader("Content-Disposition", "attachment; filename=\"sherlock_holmes.jpg\"");
-        StreamUtils.copy(imageFile.getInputStream(), response.getOutputStream());
-	} catch (Exception e) {
-		System.out.println("deu nao");
-	}
-    return response;
-}
-	
-	
-	public String PegarImagens(String codigo) {
-		String lista = null;
-		String caminho = "C:\\catalogo\\imagens\\"+codigo;
-		File arquivo = new File(caminho);
-		System.out.println(caminho);
-		if(arquivo != null) {
-			String encode64 = null;
-			
-			try {
-				FileInputStream stream = new FileInputStream(arquivo);
-				byte[] bites = new byte[(int) arquivo.length()];
-				stream.read(bites);
-				encode64 = Base64.getEncoder().encodeToString(bites);
-				lista = "data:image/jpeg; base64,"+ encode64;
-				stream.close();
-			} catch (Exception e) {
-				System.out.println("erro");
-			}
-		}
-		return lista;
-	}
-	
-	
 	
 	public Page<Produto> Listar(ProdutoFilter filtro, Pageable pageable){
 		return this.dao.Filtrando(filtro, pageable);
+	}
+	
+	public Page<ResumoProduto> Resume(ProdutoFilter filtro, Pageable page) {
+		return this.dao.resumir(filtro, page);
 	}
 	
 	public Produto Criar(Produto produto) {
@@ -131,92 +73,84 @@ public class ProdutoService {
 	
 	public Produto Atualizar(Long id, Produto produto) {
 		Produto salvo = BuscarPorId(id);
-		BeanUtils.copyProperties(produto, salvo, "id");
+		BeanUtils.copyProperties(produto, salvo, "id","codigo");
 		return this.Criar(salvo);
 	}
 	
-	
-//	public Resource PegarImagem(String filename) {
-//	Path path = Paths.get(filename);
-//	System.out.println(filename);
-//	Resource resource = null;
-//	String contentType = "application/octet-stream";
-//	try {
-//		resource = new UrlResource(path.toUri());
-//	} catch (Exception e) {e.printStackTrace();}
-//	return resource;
-//}
-//
-//public HttpServletResponse downloadImageGroovy(HttpServletResponse response, String nomearquivo){
-//	try {
-//		ClassPathResource imageFile = new ClassPathResource(this.diretorioFotos + nomearquivo);
-//        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-//        response.setHeader("Content-Disposition", "attachment; filename=\"sherlock_holmes.jpg\"");
-//        StreamUtils.copy(imageFile.getInputStream(), response.getOutputStream());
-//	} catch (Exception e) {
-//		System.out.println("deu nao");
-//	}
-//    return response;
-//}
+	public void SalvarFoto(MultipartFile imagem) {
+		Path dir = this.SalvarImagem(this.diretorioFotos, imagem);
+		String nome = this.CorrigeBarra(imagem.getOriginalFilename());
+		this.RedimensionarParaIcone(dir, nome, 400, 400);
+	}
 
-//@RequestMapping(value = "/show", method = RequestMethod.GET)
-//void showImage(HttpServletResponse response){
-//
-//    ClassPathResource imageFile = new ClassPathResource("holmes.jpg")
-//    response.setContentType(MediaType.IMAGE_JPEG_VALUE)
-//    response.setHeader("Content-Disposition", "inline; filename=\"sherlock_holmes.jpg\"")
-//    StreamUtils.copy(imageFile.getInputStream(), response.getOutputStream())
-//}
-	
-//	@PostMapping("/upload")
-//	public ResponseEntity uploadToLocalFileSystem(@RequestParam("file") MultipartFile file) {
-//		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-//		
-//		Path path = Paths.get(fileBasePath + fileName);
-//		
-//		try {
-//			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/download/").path(fileName).toUriString();
-//		return ResponseEntity.ok(fileDownloadUri);
-//	}
-//	
-//	private final Path rootLocation = Paths.get("upload-dir");
-//	
-//	public void store(MultipartFile file) {
-//	    try {
-//	      Files.copy(file.getInputStream(), this.rootLocation.resolve(file.getOriginalFilename()));
-//	    } catch (Exception e) {
-//	      throw new RuntimeException("FAIL!");
-//	    }
-//	  }
-//	 
-//	  public Resource loadFile(String filename) {
-//	    try {
-//	      Path file = rootLocation.resolve(filename);
-//	      Resource resource = new UrlResource(file.toUri());
-//	      if (resource.exists() || resource.isReadable()) {
-//	        return resource;
-//	      } else {
-//	        throw new RuntimeException("FAIL!");
-//	      }
-//	    } catch (MalformedURLException e) {
-//	      throw new RuntimeException("FAIL!");
-//	    }
-//	  }
-//	 
-//	  public void deleteAll() {
-//	    FileSystemUtils.deleteRecursively(rootLocation.toFile());
-//	  }
-//	 
-//	  public void init() {
-//	    try {
-//	      Files.createDirectory(rootLocation);
-//	    } catch (IOException e) {
-//	      throw new RuntimeException("Could not initialize storage!");
-//	    }
-//	  
-//	  }
+	private Path SalvarImagem(String diretorio, MultipartFile arquivo) {
+		Path diretorioPath = Paths.get(this.raiz, diretorio);
+		String codigo = CorrigeBarra(arquivo.getOriginalFilename());
+		Path arquivoPath = diretorioPath.resolve(codigo);
+		
+		try {
+			Files.createDirectories(diretorioPath);
+			arquivo.transferTo(arquivoPath.toFile());	
+
+		} catch (IOException e) {
+			throw new RuntimeException("Problemas na tentativa de salvar arquivo.", e);
+		}	
+		
+		return arquivoPath;
+	}
+    
+    private void RedimensionarParaIcone(Path image, String nome, int new_w, int new_h) {
+    	Path diretorioPath = Paths.get(this.raiz, this.diretorioIcones);
+    	String codigo = CorrigeBarra(nome);
+		File arquivo = image.toFile();    	
+		
+    	try {
+    		Files.createDirectories(diretorioPath);
+    		
+            BufferedImage imagem = ImageIO.read(arquivo);
+            BufferedImage new_img = new BufferedImage(new_w, new_h, BufferedImage.TYPE_INT_RGB);
+
+            Graphics2D g = new_img.createGraphics();
+            g.drawImage(imagem, 0, 0, new_w, new_h, null);
+            g.dispose();
+            
+            ImageIO.write(new_img, "JPG", new File(diretorioPath+"\\"+ "a_"+ codigo));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+	}
+    
+    public byte[] BuscarImagem(String codigo){
+    	Path diretorioPath = Paths.get(this.raiz, this.diretorioFotos);
+    	
+    	byte[] bytes = null;
+    	try {
+    		InputStream imagem = new FileInputStream(diretorioPath +"\\"+ codigo + ".jpeg");
+    		bytes = StreamUtils.copyToByteArray(imagem);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}                
+        return bytes;
+    }
+    
+   
+    
+    public byte[] BuscarIcones(String codigo) {
+    	Path diretorioPath = Paths.get(this.raiz, this.diretorioIcones);
+    	
+    	byte[] bytes = null;
+    	try {
+    		InputStream imagem = new FileInputStream(diretorioPath +"\\a_"+ codigo + ".jpeg");
+    		
+    		bytes = StreamUtils.copyToByteArray(imagem);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}                
+        return bytes;
+    }
+    
+    private String CorrigeBarra(String codigo) {
+    	codigo = codigo.replaceAll("/", "-");
+    	return codigo;
+    }
 }
