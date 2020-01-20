@@ -16,6 +16,12 @@ public class Grupo implements Serializable {
 	private Long id;
 	private String abreviacao;
 	private String nomegrupo;
+	private String fperf;
+	private String faces;
+	private String fvidro;
+	private String fchapa;
+	private String ftrat;
+	private String facessep;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +32,11 @@ public class Grupo implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public String getAbreviacao() {
 		return abreviacao;
 	}
-	
+
 	public void setAbreviacao(String abreviacao) {
 		this.abreviacao = abreviacao;
 	}
@@ -38,9 +44,57 @@ public class Grupo implements Serializable {
 	public String getNomegrupo() {
 		return nomegrupo;
 	}
-	
+
 	public void setNomegrupo(String nomegrupo) {
 		this.nomegrupo = nomegrupo;
+	}
+
+	public String getFperf() {
+		return fperf;
+	}
+
+	public void setFperf(String fperf) {
+		this.fperf = fperf;
+	}
+
+	public String getFaces() {
+		return faces;
+	}
+
+	public void setFaces(String faces) {
+		this.faces = faces;
+	}
+
+	public String getFvidro() {
+		return fvidro;
+	}
+
+	public void setFvidro(String fvidro) {
+		this.fvidro = fvidro;
+	}
+
+	public String getFchapa() {
+		return fchapa;
+	}
+
+	public void setFchapa(String fchapa) {
+		this.fchapa = fchapa;
+	}
+
+	public String getFtrat() {
+		return ftrat;
+	}
+
+	public void setFtrat(String ftrat) {
+		this.ftrat = ftrat;
+	}
+
+	public String getFacessep() {
+		return facessep;
+	}
+
+	public void setFacessep(String facessep) {
+		this.facessep = facessep;
 	}
 
 	@Override

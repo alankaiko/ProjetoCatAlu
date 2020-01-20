@@ -12,41 +12,41 @@ import org.springframework.stereotype.Service;
 
 import br.com.alucentro.api.dominio.Linha;
 import br.com.alucentro.api.repository.LinhaRepository;
-import br.com.alucentro.api.repository.filtro.LinhaFilter;
+import br.com.alucentro.api.repository.filtro.Linhafilter;
 
 @Service
 public class LinhaService {
 	@Autowired
 	private LinhaRepository dao;
-	
-	public Page<Linha> Filtrando(LinhaFilter filtro, Pageable page) {
-		return this.dao.Filtrando(filtro, page);
-	}
-	
+
 	public List<Linha> Listar() {
 		return this.dao.findAll();
 	}
-	
+
+	public Page<Linha> Filtrando(Linhafilter filtro, Pageable page) {
+		return this.dao.Filtrando(filtro, page);
+	}
+
 	public Linha Criar(Linha linha) {
 		return this.dao.save(linha);
 	}
-	
+
 	public void Deletar(Long id) {
 		this.dao.deleteById(id);
 	}
-	
+
 	public Linha BuscarPorId(Long id) {
 		Optional<Linha> linha = this.dao.findById(id);
-		
-		if(linha.get() == null)
+
+		if (linha.get() == null)
 			throw new EmptyResultDataAccessException(1);
-		
+
 		return linha.get();
 	}
-	
+
 	public Linha Atualizar(Long id, Linha linha) {
 		Linha salvo = this.BuscarPorId(id);
-		BeanUtils.copyProperties(linha, salvo,"id");
+		BeanUtils.copyProperties(linha, salvo, "id");
 		return this.Criar(salvo);
 	}
 }

@@ -24,53 +24,55 @@ public class LinhaRepositoryImpl implements LinhaRepositoryQuery {
 	private EntityManager em;
 
 	@Override
-	public Page<Linha> Filtrando(LinhaFilter filtro, Pageable page) {
+	public Page<Linha> Filtrando(Linhafilter filtro, Pageable page) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		CriteriaQuery<Linha> query = builder.createQuery(Linha.class);
 		Root<Linha> root = query.from(Linha.class);
-		
-		query.orderBy(builder.asc(root.get("id")));
-		Predicate[] predicato = AdicionarRestricoes(builder, filtro, root);
+
+		Predicate[] predicato = AdicionarRestricoes(filtro, builder, root);
 		query.where(predicato);
-		
+
 		TypedQuery<Linha> tiped = em.createQuery(query);
 		AdicionarPaginacao(tiped, page);
-		
+
 		return new PageImpl<>(tiped.getResultList(), page, Total(filtro));
 	}
 
-	private Predicate[] AdicionarRestricoes(CriteriaBuilder builder, LinhaFilter filtro, Root<Linha> root) {
-		List<Predicate> lista= new ArrayList<Predicate>();
-		
-		if(!StringUtils.isEmpty(filtro.getNomelinha()))
-			lista.add(builder.like(builder.lower(root.get(Linha_.nomelinha)), "%"+ filtro.getNomelinha().toLowerCase()+"%"));
-		
-		if(!StringUtils.isEmpty(filtro.getDescricao()))
-			lista.add(builder.like(builder.lower(root.get(Linha_.descricao)), "%"+ filtro.getDescricao().toLowerCase()+ "%"));
-		
-		if(!StringUtils.isEmpty(filtro.getCor()))
-			lista.add(builder.like(builder.lower(root.get(Linha_.cor)), "%"+ filtro.getCor().toLowerCase()+"%"));
-		
+	private Predicate[] AdicionarRestricoes(Linhafilter filtro, CriteriaBuilder builder, Root<Linha> root) {
+		List<Predicate> lista = new ArrayList<Predicate>();
+
+		if (!StringUtils.isEmpty(filtro.getNomelinha()))
+			lista.add(builder.like(builder.lower(root.get(Linha_.nomelinha)),
+					"%" + filtro.getNomelinha().toLowerCase() + "%"));
+
+		if (!StringUtils.isEmpty(filtro.getDescricao()))
+			lista.add(builder.like(builder.lower(root.get(Linha_.descricao)),
+					"%" + filtro.getDescricao().toLowerCase() + "%"));
+
+		if (!StringUtils.isEmpty(filtro.getCor()))
+			lista.add(builder.like(builder.lower(root.get(Linha_.cor)), "%" + filtro.getCor().toLowerCase() + "%"));
+
 		return lista.toArray(new Predicate[lista.size()]);
 	}
-		
+
 	private void AdicionarPaginacao(TypedQuery<?> tiped, Pageable page) {
 		int paginaatual = page.getPageNumber();
 		int totalporpagina = page.getPageSize();
 		int primeiroRegistroDaPagina = paginaatual * totalporpagina;
-		
+
 		tiped.setFirstResult(primeiroRegistroDaPagina);
 		tiped.setMaxResults(totalporpagina);
 	}
-	
-	private Long Total(LinhaFilter filtro) {
+
+	private Long Total(Linhafilter filtro) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		CriteriaQuery<Long> query = builder.createQuery(Long.class);
 		Root<Linha> root = query.from(Linha.class);
-		
-		Predicate[] predicato = AdicionarRestricoes(builder, filtro, root);
+
+		Predicate[] predicato = AdicionarRestricoes(filtro, builder, root);
 		query.where(predicato);
 		query.select(builder.count(root));
 		return em.createQuery(query).getSingleResult();
 	}
+
 }
