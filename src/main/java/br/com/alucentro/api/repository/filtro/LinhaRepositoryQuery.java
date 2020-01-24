@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 import br.com.alucentro.api.dominio.Linha;
 
 public interface LinhaRepositoryQuery {
-	public Page<Linha> Filtrando(Linhafilter filtro, Pageable page);
+	public Page<Linha> Filtrando(LinhaFilter filtro, Pageable page);
 }

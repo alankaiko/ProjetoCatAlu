@@ -67,7 +67,7 @@ public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery{
 		
 		criteria.orderBy(builder.asc(root.get("id")));		
 		criteria.select(builder.construct(
-			ResumoProduto.class, root.get(Produto_.id), root.get(Produto_.codigo), root.get(Produto_.descricao), root.get(Produto_.peso)));
+			ResumoProduto.class, root.get(Produto_.id), root.get(Produto_.codigo), root.get(Produto_.descricao)));
 		
 		Predicate[] predicates = AdicionarRestricoes(builder, filtro, root);
 		criteria.where(predicates);

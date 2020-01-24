@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.alucentro.api.dominio.Linha;
 import br.com.alucentro.api.eventos.RecursoCriadoEvent;
-import br.com.alucentro.api.repository.filtro.Linhafilter;
+import br.com.alucentro.api.repository.filtro.LinhaFilter;
 import br.com.alucentro.api.service.LinhaService;
 
 @RestController
@@ -43,7 +43,7 @@ public class LinhaResource {
 	}
 	
 	@GetMapping(params = "resumo")
-	public Page<Linha> Filtrado(Linhafilter filtro, Pageable page){
+	public Page<Linha> Filtrado(LinhaFilter filtro, Pageable page){
 		return this.service.Filtrando(filtro, page);
 	}
 

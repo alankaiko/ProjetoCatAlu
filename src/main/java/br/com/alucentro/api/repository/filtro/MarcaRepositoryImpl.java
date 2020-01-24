@@ -16,42 +16,37 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
-import br.com.alucentro.api.dominio.Linha;
-import br.com.alucentro.api.dominio.Linha_;
+import br.com.alucentro.api.dominio.Marca;
+import br.com.alucentro.api.dominio.Marca_;
 
-public class LinhaRepositoryImpl implements LinhaRepositoryQuery {
+public class MarcaRepositoryImpl implements MarcaRepositoryQuery{
 	@PersistenceContext
 	private EntityManager em;
-
+	
+	
 	@Override
-	public Page<Linha> Filtrando(LinhaFilter filtro, Pageable page) {
+	public Page<Marca> Filtrar(MarcaFilter filtro, Pageable page) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
-		CriteriaQuery<Linha> query = builder.createQuery(Linha.class);
-		Root<Linha> root = query.from(Linha.class);
-
-		Predicate[] predicato = AdicionarRestricoes(filtro, builder, root);
+		CriteriaQuery<Marca> query = builder.createQuery(Marca.class);
+		Root<Marca> root = query.from(Marca.class);
+		
+		query.orderBy(builder.asc(root.get("id")));
+		Predicate[] predicato = AdicionarRestricoes(builder, filtro, root);
 		query.where(predicato);
-
-		TypedQuery<Linha> tiped = em.createQuery(query);
+		
+		TypedQuery<Marca> tiped = em.createQuery(query);
 		AdicionarPaginacao(tiped, page);
-
+		
 		return new PageImpl<>(tiped.getResultList(), page, Total(filtro));
 	}
-
-	private Predicate[] AdicionarRestricoes(LinhaFilter filtro, CriteriaBuilder builder, Root<Linha> root) {
-		List<Predicate> lista = new ArrayList<Predicate>();
-
-		if (!StringUtils.isEmpty(filtro.getNomelinha()))
-			lista.add(builder.like(builder.lower(root.get(Linha_.nomelinha)),
-					"%" + filtro.getNomelinha().toLowerCase() + "%"));
-
-		if (!StringUtils.isEmpty(filtro.getDescricao()))
-			lista.add(builder.like(builder.lower(root.get(Linha_.descricao)),
-					"%" + filtro.getDescricao().toLowerCase() + "%"));
-
-		if (!StringUtils.isEmpty(filtro.getCor()))
-			lista.add(builder.like(builder.lower(root.get(Linha_.cor)), "%" + filtro.getCor().toLowerCase() + "%"));
-
+	
+	
+	private Predicate[] AdicionarRestricoes(CriteriaBuilder builder, MarcaFilter filtro, Root<Marca> root) {
+		List<Predicate> lista= new ArrayList<Predicate>();
+		
+		if(!StringUtils.isEmpty(filtro.getMarca()))
+			lista.add(builder.like(builder.lower(root.get(Marca_.marca)), "%"+ filtro.getMarca().toLowerCase()+"%"));
+		
 		return lista.toArray(new Predicate[lista.size()]);
 	}
 
@@ -63,16 +58,16 @@ public class LinhaRepositoryImpl implements LinhaRepositoryQuery {
 		tiped.setFirstResult(primeiroRegistroDaPagina);
 		tiped.setMaxResults(totalporpagina);
 	}
-
-	private Long Total(LinhaFilter filtro) {
+	
+	private Long Total(MarcaFilter filtro) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		CriteriaQuery<Long> query = builder.createQuery(Long.class);
-		Root<Linha> root = query.from(Linha.class);
-
-		Predicate[] predicato = AdicionarRestricoes(filtro, builder, root);
+		Root<Marca> root = query.from(Marca.class);
+		
+		Predicate[] predicato = AdicionarRestricoes(builder, filtro, root);
 		query.where(predicato);
 		query.select(builder.count(root));
 		return em.createQuery(query).getSingleResult();
 	}
-
+	
 }

@@ -6,10 +6,13 @@ import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.alucentro.api.dominio.Marca;
 import br.com.alucentro.api.repository.MarcaRepository;
+import br.com.alucentro.api.repository.filtro.MarcaFilter;
 
 @Service
 public class MarcaService {
@@ -18,6 +21,10 @@ public class MarcaService {
 	
 	public List<Marca> Listar() {
 		return this.dao.findAll();
+	}
+	
+	public Page<Marca> Filtrando(MarcaFilter filtro, Pageable page) {
+		return this.dao.Filtrar(filtro, page);
 	}
 	
 	public Marca Criar(Marca marca) {

@@ -1,6 +1,6 @@
 package br.com.alucentro.api.repository.filtro;
 
-public class Linhafilter {
+public class LinhaFilter {
 	private String nomelinha;
 	private String descricao;
 	private String cor;

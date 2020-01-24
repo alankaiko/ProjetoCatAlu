@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.alucentro.api.dominio.Marca;
 import br.com.alucentro.api.eventos.RecursoCriadoEvent;
+import br.com.alucentro.api.repository.filtro.MarcaFilter;
 import br.com.alucentro.api.service.MarcaService;
 
 @RestController
@@ -37,6 +40,11 @@ public class MarcaResource {
 	@GetMapping
 	public List<Marca> Listar() {
 		return this.service.Listar();
+	}
+	
+	@GetMapping(params = "resumo")
+	public Page<Marca> ListarFiltro(MarcaFilter filtro, Pageable page) {
+		return this.service.Filtrando(filtro, page);
 	}
 	
 	@PostMapping

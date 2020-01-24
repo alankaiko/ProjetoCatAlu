@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.alucentro.api.dominio.Linha;
 import br.com.alucentro.api.repository.LinhaRepository;
-import br.com.alucentro.api.repository.filtro.Linhafilter;
+import br.com.alucentro.api.repository.filtro.LinhaFilter;
 
 @Service
 public class LinhaService {
@@ -23,7 +23,7 @@ public class LinhaService {
 		return this.dao.findAll();
 	}
 
-	public Page<Linha> Filtrando(Linhafilter filtro, Pageable page) {
+	public Page<Linha> Filtrando(LinhaFilter filtro, Pageable page) {
 		return this.dao.Filtrando(filtro, page);
 	}
 
