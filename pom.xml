@@ -20,7 +20,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		
-		<spring-security-oauth2.version>2.2.1.RELEASE</spring-security-oauth2.version>
+		<spring-security-oauth2.version>2.2.4.RELEASE</spring-security-oauth2.version>
 		<spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
 	</properties>
 
